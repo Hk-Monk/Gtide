@@ -180,9 +180,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 100px; /* Increased height for larger logo */
+            height: 100px; /* Standard compact height */
         }
-        .logo img { height: 80px; width: auto; } /* Increased logo size */
+        .logo {
+            position: relative;
+            z-index: 1000;
+        }
+        .logo img { 
+            height: 135px; /* Oversized logo to stand out */
+            width: auto; 
+            max-width: none;
+            transition: height 0.3s ease;
+        } 
         
         .nav-menu {
             display: flex;
@@ -822,8 +831,8 @@
 
         @media (max-width: 768px) {
             .top-bar { display: none; }
-            .navbar { height: 80px; } /* Slightly increased for mobile */
-            .logo img { height: 60px; } /* Keep readable size on mobile */
+            .navbar { height: 80px; } /* Compact mobile header */
+            .logo img { height: 100px; } /* Oversized logo for mobile */
             .nav-menu {
                 position: absolute; top: 80px; left: 0; width: 100%;
                 background: white; flex-direction: column; padding: 30px;
@@ -904,7 +913,7 @@
                 <p>Students Trained</p>
             </div>
             <div class="stat-item">
-                <h3 class="counter" data-target="150">0</h3>
+                <h3 class="counter" data-target="100">0</h3>
                 <p>Hiring Partners</p>
             </div>
             <div class="stat-item">
@@ -912,8 +921,8 @@
                 <p>Real-Time Projects</p>
             </div>
             <div class="stat-item">
-                <h3 class="counter" data-target="100%">0</h3>
-                <p>Placement Support </p>
+                <h3 class="counter" data-target="100">0</h3>
+                <p>Placement Support %</p>
             </div>
         </div>
     </section>
@@ -1427,125 +1436,11 @@
         function closeModal() {
             modal.classList.remove('open');
         }
-        
         function closeSyllabusModal() {
             syllabusModal.classList.remove('open');
         }
 
-        // Course Data
-        const courses = {
-            python: {
-                title: "Python Full Stack Master Program",
-                duration: "6 Months",
-                syllabus: [
-                    "Introduction to Python Programming",
-                    "Data Structures & Algorithms",
-                    "Web Frameworks: Django & Flask",
-                    "Frontend: HTML5, CSS3, JavaScript, React",
-                    "Database Management: MySQL & PostgreSQL",
-                    "RESTful APIs & Integration",
-                    "Version Control with Git/GitHub",
-                    "Capstone Project & Deployment"
-                ]
-            },
-            java: {
-                title: "Java Full Stack Master Program",
-                duration: "6 Months",
-                syllabus: [
-                    "Core Java (OOPs, Collections, Streams)",
-                    "Advanced Java (JDBC, Servlets, JSP)",
-                    "Spring Framework & Spring Boot",
-                    "Frontend: Angular or React",
-                    "Hibernate & JPA (ORM)",
-                    "Microservices Architecture",
-                    "Testing with JUnit & Mockito",
-                    "Real-time Enterprise Project"
-                ]
-            },
-            ai: {
-                title: "AI & Machine Learning",
-                duration: "6 Months",
-                syllabus: [
-                    "Python for Data Science",
-                    "Statistics & Probability",
-                    "Supervised & Unsupervised Learning",
-                    "Natural Language Processing (NLP)",
-                    "Deep Learning with Neural Networks",
-                    "Computer Vision (OpenCV)",
-                    "TensorFlow & Keras Frameworks",
-                    "AI Model Deployment"
-                ]
-            },
-            datascience: {
-                title: "Data Science & Analytics",
-                duration: "6 Months",
-                syllabus: [
-                    "Python & R Programming",
-                    "Data Analysis with Pandas & NumPy",
-                    "Data Visualization with Matplotlib & Seaborn",
-                    "SQL for Data Science",
-                    "PowerBI & Tableau Dashboarding",
-                    "Machine Learning Algorithms",
-                    "Big Data Basics",
-                    "Capstone Projects"
-                ]
-            },
-            aws: {
-                title: "AWS Cloud Computing",
-                duration: "6 Months",
-                syllabus: [
-                    "Introduction to Cloud Computing",
-                    "AWS Global Infrastructure",
-                    "EC2, EBS, & Elastic Load Balancing",
-                    "S3 Storage & Glacier",
-                    "IAM (Identity & Access Management)",
-                    "VPC Networking & Security",
-                    "Serverless Computing (Lambda)",
-                    "CloudFormation & Monitoring"
-                ]
-            },
-            testing: {
-                title: "Software Testing (Manual + Automation)",
-                duration: "6 Months",
-                syllabus: [
-                    "Software Development Life Cycle (SDLC)",
-                    "Manual Testing Concepts & Test Cases",
-                    "JIRA for Bug Tracking",
-                    "Core Java for Testers",
-                    "Selenium WebDriver Automation",
-                    "TestNG Framework",
-                    "API Testing with Postman",
-                    "CI/CD Integration"
-                ]
-            }
-        };
-
-        function showCourseDetails(courseKey) {
-            const course = courses[courseKey];
-            const contentDiv = document.getElementById('syllabusContent');
-            
-            if (course) {
-                let syllabusItems = "";
-                course.syllabus.forEach(item => {
-                    syllabusItems += `<li><i class="fa-solid fa-check"></i> ${item}</li>`;
-                });
-
-                contentDiv.innerHTML = `
-                    <div class="syllabus-header">
-                        <h3 class="syllabus-title">${course.title}</h3>
-                        <div class="syllabus-meta">
-                            <span><i class="fa-regular fa-clock"></i> Duration: ${course.duration}</span>
-                            <span><i class="fa-solid fa-award"></i> Certificate Included</span>
-                        </div>
-                    </div>
-                    <ul class="syllabus-list">
-                        ${syllabusItems}
-                    </ul>
-                `;
-                syllabusModal.classList.add('open');
-            }
-        }
-
+        // Auto open modal logic
         window.addEventListener('load', () => {
             if (!sessionStorage.getItem('gtydePopupShown')) {
                 setTimeout(() => {
@@ -1555,18 +1450,118 @@
             }
         });
         
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-        
-        syllabusModal.addEventListener('click', (e) => {
-            if (e.target === syllabusModal) closeSyllabusModal();
-        });
+        // Close on click outside
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+            if (event.target == syllabusModal) {
+                closeSyllabusModal();
+            }
+        }
 
         // WhatsApp Toggle
         function toggleWaPanel() {
             const panel = document.getElementById('waPanel');
             panel.classList.toggle('active');
+        }
+
+        // Syllabus Data
+        const syllabusData = {
+            'python': {
+                title: 'Python Full Stack Master Program',
+                duration: '6 Months',
+                modules: [
+                    'Python Fundamentals & OOPs',
+                    'Database Management (MySQL/PostgreSQL)',
+                    'Frontend: HTML, CSS, JavaScript, Bootstrap',
+                    'Backend Framework: Django & REST API',
+                    'Version Control (Git) & Deployment',
+                    'Capstone Project'
+                ]
+            },
+            'java': {
+                title: 'Java Full Stack Master Program',
+                duration: '6 Months',
+                modules: [
+                    'Core Java & Collections Framework',
+                    'Advanced Java (JDBC, Servlets, JSP)',
+                    'Spring Boot & Microservices',
+                    'Frontend: React.js / Angular',
+                    'Hibernate ORM & JPA',
+                    'Real-time Enterprise Project'
+                ]
+            },
+            'ai': {
+                title: 'Artificial Intelligence & Machine Learning',
+                duration: '6 Months',
+                modules: [
+                    'Python for Data Science (NumPy, Pandas)',
+                    'Statistics & Probability',
+                    'Machine Learning Algorithms (Supervised/Unsupervised)',
+                    'Deep Learning & Neural Networks',
+                    'NLP (Natural Language Processing)',
+                    'AI Capstone Project'
+                ]
+            },
+            'datascience': {
+                title: 'Data Science & Analytics',
+                duration: '6 Months',
+                modules: [
+                    'Data Analysis with Python',
+                    'Data Visualization (Matplotlib, Seaborn)',
+                    'SQL for Data Science',
+                    'PowerBI / Tableau',
+                    'Predictive Modeling',
+                    'Business Case Studies'
+                ]
+            },
+            'aws': {
+                title: 'AWS Cloud Computing & DevOps',
+                duration: '3-4 Months',
+                modules: [
+                    'Cloud Concepts & Architecture',
+                    'IAM, EC2, S3, RDS, VPC',
+                    'Serverless Computing (Lambda)',
+                    'DevOps Tools (Docker, Jenkins, Kubernetes)',
+                    'CI/CD Pipelines',
+                    'AWS Certification Prep'
+                ]
+            },
+            'testing': {
+                title: 'Software Testing (Manual + Automation)',
+                duration: '3-4 Months',
+                modules: [
+                    'SDLC & STLC Concepts',
+                    'Manual Testing Techniques',
+                    'Java for Selenium',
+                    'Selenium WebDriver',
+                    'TestNG & Maven',
+                    'API Testing (Postman) & JIRA'
+                ]
+            }
+        };
+
+        function showCourseDetails(courseKey) {
+            const data = syllabusData[courseKey];
+            if(!data) return;
+
+            let contentHtml = `
+                <div class="syllabus-header">
+                    <h3 class="syllabus-title">${data.title}</h3>
+                    <div class="syllabus-meta">
+                        <span><i class="fa-regular fa-clock"></i> ${data.duration}</span>
+                        <span><i class="fa-solid fa-certificate"></i> Certified Course</span>
+                    </div>
+                </div>
+                <h4 style="font-size:1.1rem; margin-bottom:10px;">Course Syllabus:</h4>
+                <ul class="syllabus-list">
+                    ${data.modules.map(module => `<li><i class="fa-solid fa-check"></i> ${module}</li>`).join('')}
+                </ul>
+            `;
+            
+            document.getElementById('syllabusContent').innerHTML = contentHtml;
+            document.getElementById('syllabusModal').classList.add('open');
         }
 
         // Form Submit
@@ -1576,7 +1571,7 @@
             const originalText = btn.innerText;
             btn.innerText = "Sending...";
             setTimeout(() => {
-                alert("Thank you! Our team will contact you shortly.");
+                alert("Thank you! Our team will contact you shortly regarding the offer.");
                 event.target.reset();
                 closeModal();
                 btn.innerText = originalText;
